@@ -310,6 +310,7 @@
             let currentKey = '';
             let retryCount = 0;
             const maxRetries = 3;
+            const keysUrl = 'https://luartor.vercel.app/Sapphire/c493453/Keys.txt';
             
             async function loadKeys() {
                 generateBtn.classList.remove('pulse');
@@ -321,7 +322,9 @@
                 errorDetails.classList.remove('show-error');
                 
                 try {
-                    const response = await fetch('Keys.txt', {
+                    // Add timestamp to prevent caching
+                    const timestamp = new Date().getTime();
+                    const response = await fetch(`${keysUrl}?t=${timestamp}`, {
                         headers: {
                             'Cache-Control': 'no-cache',
                             'Pragma': 'no-cache'
@@ -382,10 +385,10 @@
                         errorDetails.innerHTML = `
                             <strong>Error Details:</strong> ${error.message}<br><br>
                             <strong>Troubleshooting:</strong><br>
-                            1. Ensure Keys.txt exists in the same directory<br>
-                            2. Verify the file contains valid keys (one per line)<br>
-                            3. Check your network connection<br>
-                            4. Refresh the page to try again
+                            1. Check your internet connection<br>
+                            2. The server might be temporarily unavailable<br>
+                            3. Refresh the page to try again<br>
+                            4. Contact support if the problem persists
                         `;
                         errorDetails.classList.add('show-error');
                         
@@ -434,6 +437,9 @@
                     statusMessage.className = 'status error';
                 });
             });
+            
+            // Initial load attempt if needed
+            // loadKeys();
         });
     </script>
 </body>
