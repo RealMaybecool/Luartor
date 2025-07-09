@@ -1,1 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sapphire Key Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #06b6d4;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #334155);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+        
+        .key-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+        
+        .key-display {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            text-align: center;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .key-display::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--primary));
+            z-index: -1;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .key-display.active::before {
+            opacity: 0.5;
+        }
+        
+        .key-placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--light);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(148, 163, 184, 0.5);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .status {
+            margin-top: 1.5rem;
+            text-align: center;
+            min-height: 24px;
+            font-size: 0.9rem;
+        }
+        
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--error);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .copy-icon {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+        
+        @media (max-width: 600px) {
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h1 class="title">Sapphire Key Generator</h1>
+            <p class="subtitle">Get your exclusive access key with one click</p>
+        </div>
+        
+        <div class="key-container">
+            <div class="key-display" id="keyDisplay">
+                <span class="key-placeholder">Your key will appear here</span>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn btn-primary pulse" id="generateBtn">
+                <span id="generateText">Generate Key</span>
+                <span class="loading" id="generateSpinner" style="display: none;"></span>
+            </button>
+            <button class="btn btn-secondary" id="copyBtn" disabled>
+                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+                <span>Copy</span>
+            </button>
+        </div>
+        
+        <div class="status" id="statusMessage"></div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const keyDisplay = document.getElementById('keyDisplay');
+            const statusMessage = document.getElementById('statusMessage');
+            const generateSpinner = document.getElementById('generateSpinner');
+            const generateText = document.getElementById('generateText');
+            
+            let currentKey = '';
+            
+            generateBtn.addEventListener('click', async function() {
+                generateBtn.classList.remove('pulse');
+                generateBtn.disabled = true;
+                generateText.style.display = 'none';
+                generateSpinner.style.display = 'block';
+                statusMessage.textContent = '';
+                statusMessage.className = 'status';
+                
+                try {
+                    const response = await fetch('Keys.txt');
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load keys database');
+                    }
+                    
+                    const text = await response.text();
+                    const keys = text.split('\n').filter(key => key.trim() !== '');
+                    
+                    if (keys.length === 0) {
+                        throw new Error('No valid keys found in database');
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    const randomIndex = Math.floor(Math.random() * keys.length);
+                    currentKey = keys[randomIndex].trim();
+                    
+                    keyDisplay.innerHTML = currentKey;
+                    keyDisplay.classList.add('active');
+                    copyBtn.disabled = false;
+                    
+                    statusMessage.textContent = 'Key successfully generated!';
+                    statusMessage.classList.add('success');
+                    
+                    // Animation for new key
+                    keyDisplay.style.animation = 'none';
+                    void keyDisplay.offsetWidth;
+                    keyDisplay.style.animation = 'fadeIn 0.5s ease';
+                } catch (error) {
+                    console.error('Error:', error);
+                    statusMessage.textContent = error.message;
+                    statusMessage.classList.add('error');
+                    keyDisplay.innerHTML = '<span class="key-placeholder">Failed to generate key</span>';
+                    keyDisplay.classList.remove('active');
+                } finally {
+                    generateBtn.disabled = false;
+                    generateText.style.display = 'block';
+                    generateSpinner.style.display = 'none';
+                }
+            });
+            
+            copyBtn.addEventListener('click', function() {
+                if (!currentKey) return;
+                
+                navigator.clipboard.writeText(currentKey).then(function() {
+                    statusMessage.textContent = 'Key copied to clipboard!';
+                    statusMessage.className = 'status success';
+                    
+                    copyBtn.innerHTML = `
+                        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Copied!</span>
+                    `;
+                    
+                    setTimeout(function() {
+                        copyBtn.innerHTML = `
+                            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                            </svg>
+                            <span>Copy</span>
+                        `;
+                        copyBtn.disabled = false;
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                    statusMessage.textContent = 'Failed to copy key';
+                    statusMessage.className = 'status error';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
