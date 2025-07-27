@@ -1,255 +1,226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Luartor Login</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --primary: #4f46e5;
-    --secondary: #06b6d4;
-    --dark: #0f172a;
-    --light: #f8fafc;
-    --error: #ef4444;
-    --success: #10b981;
-  }
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-  body, html {
-    height: 100%;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #1e1e2f, #343456);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--light);
-  }
-  #login-container {
-    background: rgba(15, 23, 42, 0.9);
-    border-radius: 18px;
-    padding: 40px 32px;
-    width: 360px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  #login-container::before {
-    content: '';
-    position: absolute;
-    width: 120%;
-    height: 120%;
-    background: linear-gradient(120deg, #6366f1, #0ea5e9, #22d3ee);
-    animation: slidebg 6s linear infinite;
-    top: -10%;
-    left: -10%;
-    filter: blur(40px);
-    opacity: 0.6;
-    z-index: 0;
-    border-radius: 18px;
-  }
-  @keyframes slidebg {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-  }
-  #login-container * {
-    position: relative;
-    z-index: 1;
-  }
-  h1 {
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin-bottom: 14px;
-    background: linear-gradient(90deg, var(--secondary), var(--primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  p.subtitle {
-    color: #a0aec0;
-    margin-bottom: 32px;
-    font-weight: 300;
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  input[type="text"] {
-    padding: 14px 18px;
-    border-radius: 12px;
-    border: 2px solid #334155;
-    background: #1e293b;
-    color: var(--light);
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: border-color 0.3s ease;
-    font-family: monospace;
-  }
-  input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 10px var(--primary);
-  }
-  input[type="text"].invalid {
-    border-color: var(--error);
-    animation: shake 0.3s ease;
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25%, 75% { transform: translateX(-6px); }
-    50% { transform: translateX(6px); }
-  }
-  button[type="submit"] {
-    padding: 16px 0;
-    border-radius: 14px;
-    border: none;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5);
-    transition: background 0.4s ease;
-  }
-  button[type="submit"]:hover:not(:disabled) {
-    background: linear-gradient(90deg, #6366f1, #22d3ee);
-  }
-  button[type="submit"]:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  .status-msg {
-    margin-top: 18px;
-    font-size: 1rem;
-    min-height: 24px;
-    font-weight: 600;
-  }
-  .error {
-    color: var(--error);
-  }
-  .success {
-    color: var(--success);
-  }
-  .loading-spinner {
-    border: 4px solid rgba(255, 255, 255, 0.2);
-    border-top: 4px solid var(--secondary);
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    margin: 0 auto;
-    animation: spin 1s linear infinite;
-    display: none;
-  }
-  .loading-spinner.active {
-    display: block;
-  }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  footer {
-    position: absolute;
-    bottom: 16px;
-    width: 100%;
-    font-size: 0.85rem;
-    color: #64748b;
-    user-select: none;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luartor - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    @keyframes fadeInUp {
+      0% {opacity:0;transform:translateY(20px);}
+      100% {opacity:1;transform:none;}
+    }
+    @keyframes pulse {
+      0%,100% {transform:scale(1);}
+      50% {transform:scale(1.05);}
+    }
+    :root {
+      --primary: #4f46e5;
+      --secondary: #06b6d4;
+      --dark-bg: #0f172a;
+      --text-light: #f8fafc;
+      --accent: #6366f1;
+      --error-color: #ef4444;
+      --success-color: #10b981;
+      --input-bg: #1e293b;
+      --input-border: #334155;
+    }
+    * {
+      box-sizing: border-box;
+      user-select:none;
+    }
+    body,html {
+      margin:0;
+      height:100%;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(270deg, #1e293b, #0f172a, #334155);
+      background-size: 600% 600%;
+      animation: gradientBG 18s ease infinite;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;
+      color: var(--text-light);
+    }
+    .container {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 24px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+      width: 360px;
+      max-width: 95vw;
+      padding: 36px 32px 48px;
+      display:flex;
+      flex-direction: column;
+      animation: fadeInUp 0.8s ease forwards;
+      position: relative;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 2.25rem;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      text-align:center;
+    }
+    label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border-radius: 14px;
+      border: 2px solid var(--input-border);
+      background-color: var(--input-bg);
+      color: var(--text-light);
+      outline:none;
+      transition: border-color 0.3s ease;
+      font-family: 'Poppins', monospace;
+      letter-spacing: 0.15em;
+      user-select:text;
+    }
+    input[type="text"]:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 16px var(--secondary);
+    }
+    button {
+      margin-top: 28px;
+      padding: 14px 0;
+      border-radius: 20px;
+      border:none;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 700;
+      font-size: 1.15rem;
+      cursor: pointer;
+      user-select:none;
+      transition: background 0.4s ease;
+      animation: pulse 2.4s infinite;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.6);
+    }
+    button:hover {
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.8);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+      animation:none;
+      box-shadow:none;
+    }
+    .status {
+      margin-top: 14px;
+      min-height: 22px;
+      text-align:center;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select:none;
+    }
+    .status.error {
+      color: var(--error-color);
+    }
+    .status.success {
+      color: var(--success-color);
+    }
+    .footer {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      color: #64748b;
+      user-select:none;
+    }
+  </style>
 </head>
 <body>
-<div id="login-container" role="main" aria-labelledby="login-title" aria-describedby="login-desc">
-  <h1 id="login-title">Luartor Login</h1>
-  <p class="subtitle" id="login-desc">Enter your 32-character API Key to continue</p>
-  <form id="loginForm" novalidate autocomplete="off" aria-live="polite" aria-busy="false">
-    <input 
-      type="text" 
-      id="apiKeyInput" 
-      name="apiKey" 
-      placeholder="Enter API Key (32 characters)" 
-      aria-required="true" 
-      aria-describedby="errorMessage"
-      maxlength="36"
-      pattern="[A-Za-z0-9\-]{32,}"
-      spellcheck="false"
-      inputmode="text"
-      autofocus
-      autocomplete="off"
-      />
-    <button type="submit" id="loginBtn" disabled>Login</button>
-  </form>
-  <div class="loading-spinner" role="status" aria-live="polite" aria-label="Loading" id="loadingSpinner"></div>
-  <div class="status-msg" id="errorMessage" role="alert" aria-live="assertive"></div>
-  <footer>© 2025 Luartor by TheBestDragon</footer>
-</div>
+  <main class="container" role="main" aria-label="Login Form">
+    <h1>Luartor Login</h1>
+    <label for="apikey">Enter API Key</label>
+    <input id="apikey" name="apikey" type="text" maxlength="32" autocomplete="off" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" spellcheck="false" aria-describedby="status" />
+    <button id="loginBtn" aria-live="polite" aria-busy="false" disabled>Verify & Login</button>
+    <div id="status" class="status" role="alert" aria-atomic="true"></div>
+    <div class="footer">© 2025 Luartor by TheBestDragon</div>
+  </main>
 
 <script>
 (() => {
-  const input = document.getElementById('apiKeyInput');
   const loginBtn = document.getElementById('loginBtn');
-  const form = document.getElementById('loginForm');
-  const errorMsg = document.getElementById('errorMessage');
-  const loadingSpinner = document.getElementById('loadingSpinner');
+  const apikeyInput = document.getElementById('apikey');
+  const statusEl = document.getElementById('status');
+  let validKeys = {};
+  let keyCheckInterval = null;
 
-  const keysUrl = 'https://raw.githubusercontent.com/RealMaybecool/Luartor/refs/heads/main/apikey.json';
+  function setStatus(msg, success = false) {
+    statusEl.textContent = msg;
+    statusEl.className = success ? 'status success' : 'status error';
+  }
+  function clearStatus() {
+    statusEl.textContent = '';
+    statusEl.className = 'status';
+  }
+  function enableButton(enabled) {
+    loginBtn.disabled = !enabled;
+  }
 
-  function validateInput(val) {
-    return /^[A-Za-z0-9\-]{32}$/.test(val);
-  }
-  
-  function setLoading(isLoading) {
-    form.setAttribute('aria-busy', isLoading.toString());
-    loadingSpinner.classList.toggle('active', isLoading);
-    loginBtn.disabled = isLoading || !validateInput(input.value.trim());
-    input.disabled = isLoading;
-  }
-  
-  input.addEventListener('input', () => {
-    const val = input.value.trim();
-    if(validateInput(val)) {
-      input.classList.remove('invalid');
-      errorMsg.textContent = '';
-      loginBtn.disabled = false;
-    } else {
-      loginBtn.disabled = true;
-      if(val.length > 0) input.classList.add('invalid');
-      else input.classList.remove('invalid');
-      errorMsg.textContent = '';
+  async function fetchKeys() {
+    try {
+      const resp = await fetch('https://raw.githubusercontent.com/RealMaybecool/Luartor/refs/heads/main/apikey.json', {cache:'no-store'});
+      if(!resp.ok) throw new Error(`Failed to fetch keys: ${resp.status}`);
+      const data = await resp.json();
+      validKeys = data;
+    } catch(e) {
+      validKeys = {};
+      setStatus('Unable to load key database.', false);
     }
+  }
+  function checkKey(key) {
+    if(!key || key.length !== 32) return false;
+    return Object.keys(validKeys).some(k => k.toLowerCase() === key.toLowerCase());
+  }
+  function getCompanyByKey(key) {
+    return validKeys[key.toLowerCase()] || null;
+  }
+
+  apikeyInput.addEventListener('input', () => {
+    clearStatus();
+    const val = apikeyInput.value.trim();
+    if(val.length === 32) enableButton(true);
+    else enableButton(false);
   });
 
-  form.addEventListener('submit', async e => {
+  loginBtn.addEventListener('click', e => {
     e.preventDefault();
-    const key = input.value.trim();
-    if(!validateInput(key)) {
-      input.classList.add('invalid');
-      errorMsg.textContent = 'API key must be exactly 32 characters (letters, numbers, or dashes).';
+    const key = apikeyInput.value.trim();
+    if(!checkKey(key)) {
+      setStatus('Invalid API key. Please check and try again.', false);
       return;
     }
-    setLoading(true);
-    errorMsg.textContent = '';
-    try {
-      const res = await fetch(keysUrl + `?t=${Date.now()}`, {cache: 'no-store'});
-      if(!res.ok) throw new Error(`Failed to fetch keys (status ${res.status})`);
-      const json = await res.json();
-      const found = Object.entries(json).find(([k]) => k.toLowerCase() === key.toLowerCase());
-      if(!found) {
-        errorMsg.textContent = 'Invalid API key. Please check and try again.';
-        input.classList.add('invalid');
-        setLoading(false);
-        return;
-      }
-      const company = found[1];
-      setLoading(false);
-      errorMsg.textContent = '';
-      window.location.href = `dashboard.html?company=${encodeURIComponent(company)}`;
-    } catch(err) {
-      errorMsg.textContent = 'Error connecting to key database. Please try again later.';
-      setLoading(false);
-    }
+    setStatus('Valid key! Redirecting...', true);
+    loginBtn.disabled = true;
+    apikeyInput.disabled = true;
+    setTimeout(() => {
+      const company = getCompanyByKey(key);
+      window.location.href = `dashboard.html?company=${encodeURIComponent(company)}&key=${encodeURIComponent(key)}`;
+    }, 1200);
   });
+
+  async function init() {
+    setStatus('Loading key database...');
+    await fetchKeys();
+    clearStatus();
+    keyCheckInterval = setInterval(fetchKeys, 2*60*1000);
+  }
+  init();
 })();
 </script>
 </body>
