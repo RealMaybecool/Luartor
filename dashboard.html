@@ -1,743 +1,588 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Luartor Advanced Dashboard</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-:root {
-  --primary: #4f46e5;
-  --secondary: #06b6d4;
-  --dark: #0f172a;
-  --light: #f8fafc;
-  --success: #10b981;
-  --error: #ef4444;
-  --warning: #f59e0b;
-}
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  user-select:none;
-}
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg,#243B55,#141E30);
-  color: #eee;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 20px;
-}
-#app {
-  background: rgba(15,22,30,0.95);
-  border-radius: 24px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  width: 540px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  animation: fadeInScale 0.6s ease forwards;
-}
-@keyframes fadeInScale {
-  0% {opacity:0;transform:scale(0.85)}
-  100% {opacity:1;transform:scale(1)}
-}
-header {
-  background: linear-gradient(90deg, var(--primary), #8f94fb);
-  padding: 24px;
-  font-weight: 600;
-  font-size: 1.8rem;
-  text-align: center;
-  letter-spacing: 2px;
-  color: white;
-  box-shadow: 0 4px 8px rgba(78, 84, 200, 0.5);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-  user-select:none;
-}
-nav {
-  display: flex;
-  background: #1e2733;
-  user-select:none;
-}
-nav button {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: 18px 0;
-  font-weight: 600;
-  color: #aaa;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: color 0.3s ease;
-  border-bottom: 3px solid transparent;
-}
-nav button.active {
-  color: var(--secondary);
-  border-bottom: 3px solid var(--secondary);
-  cursor: default;
-}
-nav button:hover:not(.active) {
-  color: #d0d0ff;
-}
-main {
-  padding: 30px 30px 40px;
-  background: #121822;
-  flex-grow: 1;
-  min-height: 450px;
-  overflow-y: auto;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
-  display: flex;
-  flex-direction: column;
-}
-main section {
-  display: none;
-  flex-direction: column;
-}
-main section.active {
-  display: flex;
-}
-h2 {
-  margin-bottom: 18px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #ccc;
-}
-p {
-  color: #aaa;
-  font-size: 1rem;
-  margin-bottom: 30px;
-  line-height: 1.4;
-}
-.btn {
-  background: linear-gradient(135deg,var(--primary),var(--secondary));
-  border: none;
-  border-radius: 16px;
-  color: white;
-  font-weight: 700;
-  font-size: 1.2rem;
-  padding: 16px 38px;
-  cursor: pointer;
-  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.5);
-  user-select:none;
-  align-self: flex-start;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.btn:hover {
-  background: linear-gradient(135deg,#675ee3,#06b6d4);
-  box-shadow: 0 10px 20px rgba(105,94,227,0.7);
-}
-.btn:active {
-  transform: scale(0.97);
-}
-label {
-  font-weight: 600;
-  margin-bottom: 6px;
-  letter-spacing: 0.05em;
-  color: #bbb;
-}
-input[type=text], textarea {
-  width: 100%;
-  padding: 14px 18px;
-  font-size: 1.05rem;
-  border-radius: 14px;
-  border: none;
-  outline: none;
-  background: #222c3c;
-  color: white;
-  box-shadow: inset 0 0 6px rgba(6, 182, 212, 0.3);
-  font-family: 'Poppins', sans-serif;
-  letter-spacing: 0.05em;
-  margin-bottom: 24px;
-  resize: vertical;
-  min-height: 36px;
-  font-weight: 400;
-}
-textarea {
-  min-height: 100px;
-}
-.message {
-  margin-top: 6px;
-  font-weight: 600;
-  min-height: 1.4em;
-  text-align: center;
-  letter-spacing: 0.05em;
-  user-select: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.message.show {
-  opacity: 1;
-}
-.message.success {
-  color: var(--success);
-  text-shadow: 0 0 6px var(--success);
-}
-.message.error {
-  color: var(--error);
-  text-shadow: 0 0 6px var(--error);
-}
-.message.warning {
-  color: var(--warning);
-  text-shadow: 0 0 6px var(--warning);
-}
-footer {
-  margin-top: 20px;
-  font-size: 0.8rem;
-  color: #666;
-  text-align: center;
-  user-select:none;
-  font-style: italic;
-}
-
-/* Sapphire Key Generator Styles */
-.key-container {
-  position: relative;
-  margin: 20px 0 36px;
-}
-.key-display {
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 8px;
-  padding: 1.5rem;
-  font-family: 'Fira Code', monospace;
-  font-size: 1.1rem;
-  word-break: break-all;
-  text-align: center;
-  min-height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  color: #f8fafc;
-  user-select: text;
-}
-.key-display::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, var(--primary), var(--secondary), var(--primary));
-  z-index: -1;
-  border-radius: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.key-display.active::before {
-  opacity: 0.5;
-}
-.key-placeholder {
-  color: #64748b;
-  font-style: italic;
-}
-.buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.btn-primary {
-  background: linear-gradient(90deg, var(--primary), #6366f1);
-  color: white;
-  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(79, 70, 229, 0.4);
-}
-.btn-primary:active {
-  transform: translateY(0);
-}
-.btn-secondary {
-  background: rgba(30, 41, 59, 0.7);
-  color: var(--light);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-}
-.btn-secondary:hover {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(148, 163, 184, 0.5);
-}
-.btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-.status {
-  margin-top: 1.5rem;
-  text-align: center;
-  min-height: 24px;
-  font-size: 0.9rem;
-}
-.success {
-  color: var(--success);
-}
-.error {
-  color: var(--error);
-}
-.warning {
-  color: var(--warning);
-}
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: var(--secondary);
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.copy-icon {
-  width: 18px;
-  height: 18px;
-}
-.pulse {
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
-}
-.error-details {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: rgba(239, 68, 68, 0.1);
-  border-radius: 6px;
-  font-size: 0.85rem;
-  text-align: left;
-  border-left: 3px solid var(--error);
-  display: none;
-}
-.show-error {
-  display: block;
-}
-.retry-btn {
-  color: var(--secondary);
-  text-decoration: underline;
-  cursor: pointer;
-  margin-left: 0.5rem;
-}
-.keylist-container {
-  max-height: 250px;
-  overflow-y: auto;
-  background: #1f2937;
-  border-radius: 14px;
-  border: 1px solid #334155;
-  padding: 12px;
-  margin-bottom: 30px;
-  font-family: monospace;
-  font-size: 0.9rem;
-  color: #a8b0c2;
-  user-select: text;
-}
-.keylist-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 6px;
-  border-bottom: 1px solid #334155;
-  align-items: center;
-}
-.keylist-item:last-child {
-  border-bottom: none;
-}
-.keylist-item.used {
-  opacity: 0.6;
-  text-decoration: line-through;
-  color: #777;
-}
-.keylist-item button {
-  background: transparent;
-  border: none;
-  color: var(--error);
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  user-select:none;
-}
-.keylist-item button:hover {
-  color: #ff7070;
-}
-.keylist-controls {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 18px;
-}
-.keylist-input {
-  flex-grow: 1;
-  font-family: monospace;
-  font-size: 1rem;
-  padding: 10px 16px;
-  border-radius: 14px;
-  border: none;
-  background: #222c3c;
-  color: white;
-  box-shadow: inset 0 0 6px rgba(6, 182, 212, 0.3);
-}
-.keylist-add-btn {
-  background: var(--success);
-  font-weight: 700;
-  padding: 0 24px;
-  transition: background-color 0.3s ease;
-}
-.keylist-add-btn:hover {
-  background: #0ebd7c;
-}
-.keylist-add-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  background: var(--success);
-}
-.keylist-export-btn {
-  background: var(--secondary);
-  font-weight: 700;
-  padding: 0 18px;
-  transition: background-color 0.3s ease;
-}
-.keylist-export-btn:hover {
-  background: #0a9cb9;
-}
-@media (max-width: 600px) {
-  #app {
-    width: 100%;
-    border-radius: 0;
-  }
-  nav button {
-    font-size: 1rem;
-  }
-  .btn {
-    font-size: 1rem;
-    padding: 14px 30px;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luartor - Super Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    @keyframes fadeIn {
+      0% {opacity:0;}
+      100% {opacity:1;}
+    }
+    @keyframes pulse {
+      0%,100% {transform:scale(1);}
+      50% {transform:scale(1.05);}
+    }
+    :root {
+      --primary: #4f46e5;
+      --secondary: #06b6d4;
+      --dark-bg: #0f172a;
+      --light-text: #f8fafc;
+      --accent: #6366f1;
+      --input-bg: #1e293b;
+      --input-border: #334155;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    * {
+      box-sizing: border-box;
+      user-select:none;
+    }
+    body,html {
+      margin:0;
+      min-height:100vh;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(270deg, #1e293b, #0f172a, #334155);
+      background-size: 600% 600%;
+      animation: gradientBG 20s ease infinite;
+      color: var(--light-text);
+      display:flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      padding: 20px 36px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      user-select:none;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+    }
+    main {
+      flex-grow: 1;
+      padding: 24px 36px;
+      max-width: 1000px;
+      margin: auto;
+      animation: fadeIn 0.8s ease forwards;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    #companyTitle {
+      font-weight: 600;
+      font-size: 1.4rem;
+      user-select:none;
+    }
+    .tabs {
+      display: flex;
+      gap: 24px;
+      border-bottom: 2px solid var(--input-border);
+      user-select:none;
+    }
+    .tab {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.15rem;
+      padding-bottom: 8px;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .tab.active {
+      border-color: var(--secondary);
+      color: var(--secondary);
+    }
+    section.content {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: 65vh;
+    }
+   
+    .key-gen-area {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+      user-select:none;
+      transition: background 0.4s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      box-shadow: 0 8px 28px rgba(6, 182, 212, 0.8);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow:none;
+    }
+    .key-display {
+      background: var(--input-bg);
+      padding: 18px 22px;
+      border-radius: 16px;
+      font-family: monospace;
+      font-size: 1.2rem;
+      user-select: text;
+      color: var(--light-text);
+      box-shadow: inset 0 0 12px #0006;
+      min-width: 260px;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .copy-btn {
+      background: var(--secondary);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 8px 18px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select:none;
+      box-shadow: 0 4px 12px rgba(6,182,212,0.7);
+      margin-left: 8px;
+      flex-shrink: 0;
+      transition: background 0.3s ease;
+    }
+    .copy-btn:hover {
+      background: var(--primary);
+    }
+    .key-list {
+      max-height: 320px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .key-item {
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--input-bg);
+      margin-bottom: 10px;
+      font-family: monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: inset 0 0 5px #0004;
+      user-select: text;
+    }
+    .key-item button.delete-key {
+      background: #ef4444;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 6px 16px;
+      cursor: pointer;
+      user-select:none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: background 0.3s ease;
+    }
+    .key-item button.delete-key:hover {
+      background: #b91c1c;
+    }
+  
+    #scriptsManagerContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      color: var(--light-text);
+    }
+    .script-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      color: #f8fafc;
+      user-select:text;
+    }
+    .script-header {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select:none;
+    }
+    .script-header button.delete-script {
+      background: #ef4444;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 6px 14px;
+      cursor: pointer;
+      user-select:none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: background 0.3s ease;
+    }
+    .script-header button.delete-script:hover {
+      background: #b91c1c;
+    }
+    textarea.lua-editor {
+      flex-grow: 1;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      color: #f8fafc;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 180px;
+      user-select:text;
+      margin-bottom: 12px;
+    }
+    label.key-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      user-select:none;
+      font-weight: 600;
+    }
+    button.save-script-btn {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      user-select:none;
+      align-self: flex-start;
+      transition: background 0.4s ease;
+    }
+    button.save-script-btn:hover {
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+    }
+    button.add-script-btn {
+      padding: 18px 0;
+      border-radius: 18px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      cursor: pointer;
+      user-select:none;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.6);
+      transition: box-shadow 0.3s ease;
+      max-width: 200px;
+      margin-top: 10px;
+      align-self: center;
+    }
+    button.add-script-btn:hover {
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.8);
+    }
+    .status-msg {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 10px;
+      user-select:none;
+      min-height: 1.2rem;
+    }
+    .status-success {
+      color: var(--success);
+    }
+    .status-error {
+      color: var(--error);
+    }
+    .footer {
+      padding: 16px 0;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      user-select:none;
+    }
+  </style>
 </head>
 <body>
-<div id="app" role="main" aria-label="Luartor Advanced Dashboard">
-<header>LUARTOR</header>
-<nav aria-label="Dashboard Navigation">
-  <button id="tab-dashboard" class="active" aria-current="page" tabindex="0">Dashboard</button>
-  <button id="tab-keys" tabindex="0">Manage Keys</button>
-  <button id="tab-settings" tabindex="0">Settings</button>
-</nav>
-<main>
-  <section id="section-dashboard" class="active" aria-label="Dashboard Section">
-    <h2 id="companyName">Company Dashboard</h2>
-    <p>Generate new keys or manage your API keys here.</p>
-    <div class="key-container">
-      <div class="key-display" id="keyDisplay">
-        <span class="key-placeholder">Your key will appear here</span>
+  <header>Luartor Super Dashboard</header>
+  <main aria-label="Dashboard Main Content">
+    <div id="companyTitle" aria-live="polite"></div>
+    <nav class="tabs" role="tablist" aria-label="Dashboard Tabs">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="keysPanel" id="tabKeys">Keys</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="scriptsPanel" id="tabScripts">Scripts</button>
+    </nav>
+    <section id="keysPanel" class="content" role="tabpanel" aria-labelledby="tabKeys" tabindex="0">
+      <div class="key-gen-area">
+        <button class="btn-primary" id="generateKeyBtn" aria-label="Generate new key">Generate New Key</button>
+        <div tabindex="0" class="key-display" id="newKeyDisplay" aria-live="polite" aria-atomic="true" aria-label="Generated key display"></div>
+        <button class="copy-btn" id="copyNewKeyBtn" aria-label="Copy generated key" title="Copy Key" disabled>Copy</button>
       </div>
-    </div>
-    <div class="buttons">
-      <button class="btn btn-primary pulse" id="generateBtn">
-        <span id="generateText">Generate Key</span>
-        <span class="loading" id="generateSpinner" style="display: none;"></span>
-      </button>
-      <button class="btn btn-secondary" id="copyBtn" disabled>
-        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-        </svg>
-        <span>Copy</span>
-      </button>
-    </div>
-    <div class="status" id="statusMessage"></div>
-    <div class="error-details" id="errorDetails"></div>
-  </section>
-
-  <section id="section-keys" aria-label="Manage Keys Section">
-    <h2>Manage Keys</h2>
-    <div class="keylist-controls">
-      <input id="newKeyInput" class="keylist-input" placeholder="Enter new key (32-digit format)" autocomplete="off" />
-      <button id="addKeyBtn" class="btn keylist-add-btn" disabled>Add Key</button>
-      <button id="exportKeysBtn" class="btn keylist-export-btn">Export Keys</button>
-    </div>
-    <div id="keysList" class="keylist-container" role="list" aria-label="Stored keys list"></div>
-    <div class="message" id="keysMsg"></div>
-  </section>
-
-  <section id="section-settings" aria-label="Settings Section">
-    <h2>Settings</h2>
-    <label for="keygenUrl">Key Generation URL</label>
-    <input type="text" id="keygenUrl" placeholder="https://yourcompany.com/generate-key" autocomplete="off" />
-    <button class="btn" id="saveSettingsBtn">Save Settings</button>
-    <div id="settingsMsg" class="message"></div>
-  </section>
-</main>
-<footer>© 2025 Luartor by TheBestDragon</footer>
-</div>
-
+      <div class="key-list" id="keyList" aria-live="polite" aria-atomic="true" aria-label="List of generated keys"></div>
+      <div id="keyStatusMsg" class="status-msg" role="alert" aria-live="assertive"></div>
+    </section>
+    <section id="scriptsPanel" class="content" role="tabpanel" aria-labelledby="tabScripts" tabindex="0" hidden>
+      <div id="scriptsManagerContainer" aria-live="polite" aria-atomic="true"></div>
+      <button class="add-script-btn" id="addScriptBtn" aria-label="Add new script">+ Add Script</button>
+      <div id="scriptStatusMsg" class="status-msg" role="alert" aria-live="assertive"></div>
+    </section>
+  </main>
+  <div class="footer">© 2025 Luartor by TheBestDragon</div>
 <script>
 (() => {
-  function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param) || '';
+  const urlParams = new URLSearchParams(window.location.search);
+  const company = urlParams.get('company') || 'default';
+  const keyFromURL = urlParams.get('key') || '';
+  const companyTitle = document.getElementById('companyTitle');
+  const keyListEl = document.getElementById('keyList');
+  const newKeyDisplay = document.getElementById('newKeyDisplay');
+  const copyNewKeyBtn = document.getElementById('copyNewKeyBtn');
+  const generateKeyBtn = document.getElementById('generateKeyBtn');
+  const keyStatusMsg = document.getElementById('keyStatusMsg');
+  const scriptStatusMsg = document.getElementById('scriptStatusMsg');
+  const tabs = document.querySelectorAll('.tab');
+  const keysPanel = document.getElementById('keysPanel');
+  const scriptsPanel = document.getElementById('scriptsPanel');
+  const scriptsManagerContainer = document.getElementById('scriptsManagerContainer');
+  const addScriptBtn = document.getElementById('addScriptBtn');
+
+  const maxKeysPerCompany = 30;
+  const maxScripts = 6;
+
+  companyTitle.textContent = `Company: ${company}`;
+
+
+  let keyStore = JSON.parse(localStorage.getItem('luartor_keys') || '{}');
+  if(!keyStore[company]) keyStore[company] = [];
+
+  let scripts = JSON.parse(localStorage.getItem(`luartor_scripts_${company}`) || '[]');
+
+
+  function saveKeyStore() {
+    localStorage.setItem('luartor_keys', JSON.stringify(keyStore));
+  }
+  function saveScripts() {
+    localStorage.setItem(`luartor_scripts_${company}`, JSON.stringify(scripts));
   }
 
-  const company = getQueryParam('company').trim();
-  const companyNameEl = document.getElementById('companyName');
-  const generateBtn = document.getElementById('generateBtn');
-  const genMsg = document.getElementById('statusMessage');
-  const keyDisplay = document.getElementById('keyDisplay');
-  const copyBtn = document.getElementById('copyBtn');
-  const errorDetails = document.getElementById('errorDetails');
-  const generateText = document.getElementById('generateText');
-  const generateSpinner = document.getElementById('generateSpinner');
 
-  const keysListEl = document.getElementById('keysList');
-  const newKeyInput = document.getElementById('newKeyInput');
-  const addKeyBtn = document.getElementById('addKeyBtn');
-  const exportKeysBtn = document.getElementById('exportKeysBtn');
-  const keysMsg = document.getElementById('keysMsg');
-
-  const keygenUrlInput = document.getElementById('keygenUrl');
-  const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-  const settingsMsg = document.getElementById('settingsMsg');
-
-  if(!company) {
-    companyNameEl.textContent = 'Dashboard';
-    generateBtn.disabled = true;
-    genMsg.textContent = 'No company specified in URL. Please login properly.';
-    genMsg.className = 'message show error';
-  } else {
-    companyNameEl.textContent = `${company} Dashboard`;
+  function showStatus(msg, isSuccess=true, forScript=false) {
+    const el = forScript ? scriptStatusMsg : keyStatusMsg;
+    el.textContent = msg;
+    el.className = 'status-msg ' + (isSuccess ? 'status-success' : 'status-error');
+    setTimeout(() => {
+      el.textContent = '';
+      el.className = 'status-msg';
+    }, 4000);
   }
 
-  const storageKey = `luartor_settings_${company}`;
-  const keysStorageKey = `luartor_keys_${company}`;
-
-  function setGenMessage(text = '', type = '') {
-    genMsg.textContent = text;
-    genMsg.className = 'message show ' + (type || '');
-  }
-  function clearGenMessage() {
-    genMsg.textContent = '';
-    genMsg.className = 'message';
-  }
-  function setSettingsMessage(text = '', type = '') {
-    settingsMsg.textContent = text;
-    settingsMsg.className = 'message show ' + (type || '');
-  }
-  function clearSettingsMessage() {
-    settingsMsg.textContent = '';
-    settingsMsg.className = 'message';
-  }
-  function setKeysMessage(text = '', type = '') {
-    keysMsg.textContent = text;
-    keysMsg.className = 'message show ' + (type || '');
-  }
-  function clearKeysMessage() {
-    keysMsg.textContent = '';
-    keysMsg.className = 'message';
-  }
-
-  function loadSettings() {
-    const saved = localStorage.getItem(storageKey);
-    if(saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if(parsed.keygenUrl) keygenUrlInput.value = parsed.keygenUrl;
-      } catch {}
-    }
-  }
-  loadSettings();
-
-  saveSettingsBtn.onclick = () => {
-    const url = keygenUrlInput.value.trim();
-    if(!url || !/^https?:\/\/\S+$/.test(url)) {
-      setSettingsMessage('Enter a valid URL starting with http:// or https://', 'error');
+  // KEYS PANEL LOGIC
+  function renderKeyList() {
+    keyListEl.innerHTML = '';
+    if(keyStore[company].length === 0) {
+      const p = document.createElement('p');
+      p.textContent = 'No keys generated yet.';
+      p.style.color = '#94a3b8';
+      p.style.userSelect = 'none';
+      keyListEl.appendChild(p);
       return;
     }
-    localStorage.setItem(storageKey, JSON.stringify({keygenUrl: url}));
-    setSettingsMessage('Settings saved successfully!', 'success');
-    setTimeout(() => clearSettingsMessage(), 4000);
-  };
-
-  function loadKeys() {
-    const saved = localStorage.getItem(keysStorageKey);
-    if(saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {}
-    }
-    return [];
-  }
-  function saveKeys(keys) {
-    localStorage.setItem(keysStorageKey, JSON.stringify(keys));
-  }
-
-  function renderKeys() {
-    const keys = loadKeys();
-    keysListEl.innerHTML = '';
-    if(keys.length === 0) {
-      keysListEl.innerHTML = '<p style="text-align:center;color:#666;">No keys stored yet.</p>';
-      return;
-    }
-    keys.forEach(({key, used}, i) => {
+    keyStore[company].forEach((key,i) => {
       const div = document.createElement('div');
-      div.className = 'keylist-item' + (used ? ' used' : '');
-      div.setAttribute('role', 'listitem');
-      div.innerHTML = `<span>${key}</span><button aria-label="Delete key ${key}" title="Delete key">&times;</button>`;
-      div.querySelector('button').onclick = () => {
-        keys.splice(i,1);
-        saveKeys(keys);
-        renderKeys();
+      div.className = 'key-item';
+      const keySpan = document.createElement('span');
+      keySpan.textContent = key;
+      keySpan.setAttribute('tabindex', '0');
+      keySpan.style.userSelect = 'text';
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete';
+      delBtn.className = 'delete-key';
+      delBtn.title = 'Delete key';
+      delBtn.onclick = () => {
+        keyStore[company].splice(i,1);
+        saveKeyStore();
+        renderKeyList();
+        showStatus('Key deleted', true);
       };
-      keysListEl.appendChild(div);
+      div.appendChild(keySpan);
+      div.appendChild(delBtn);
+      keyListEl.appendChild(div);
     });
   }
-  renderKeys();
-
-  newKeyInput.oninput = () => {
-    const val = newKeyInput.value.trim();
-    const regex = /^[A-Za-z0-9\-]{32,}$/;
-    addKeyBtn.disabled = !regex.test(val);
-  };
-
-  addKeyBtn.onclick = () => {
-    const val = newKeyInput.value.trim();
-    if(!val) return;
-    const keys = loadKeys();
-    if(keys.find(k=>k.key === val)) {
-      setKeysMessage('Key already exists.', 'warning');
-      setTimeout(() => clearKeysMessage(), 2500);
-      return;
+  function generateNewKey() {
+    if(keyStore[company].length >= maxKeysPerCompany) {
+      showStatus(`Maximum of ${maxKeysPerCompany} keys reached`, false);
+      return null;
     }
-    keys.push({key: val, used: false});
-    saveKeys(keys);
-    newKeyInput.value = '';
-    addKeyBtn.disabled = true;
-    renderKeys();
-    setKeysMessage('Key added successfully.', 'success');
-    setTimeout(() => clearKeysMessage(), 2500);
-  };
-
-  exportKeysBtn.onclick = () => {
-    const keys = loadKeys();
-    if(keys.length === 0) {
-      setKeysMessage('No keys to export.', 'warning');
-      setTimeout(() => clearKeysMessage(), 2500);
-      return;
-    }
-    const blob = new Blob([keys.map(k=>k.key).join('\n')], {type: 'text/plain'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${company}_keys_${Date.now()}.txt`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-    setKeysMessage('Keys exported successfully.', 'success');
-    setTimeout(() => clearKeysMessage(), 2500);
-  };
-
-  function setKeyDisplay(text = '', active = false) {
-    keyDisplay.textContent = text || 'Your key will appear here';
-    keyDisplay.classList.toggle('active', active);
+    const arr = new Uint8Array(16);
+    crypto.getRandomValues(arr);
+    const key = Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('');
+    keyStore[company].push(key);
+    saveKeyStore();
+    return key;
   }
-
-  let currentKey = '';
-
-  async function generateKey() {
-    if(!company) {
-      setGenMessage('No company specified.', 'error');
-      return;
-    }
-    clearGenMessage();
-    generateBtn.disabled = true;
-    generateText.style.display = 'none';
-    generateSpinner.style.display = 'inline-block';
-    setKeyDisplay('', false);
-    copyBtn.disabled = true;
-    errorDetails.style.display = 'none';
-
-    let keys = loadKeys().filter(k => !k.used);
-    if(keys.length === 0) {
-      setGenMessage('No unused keys available. Add keys in Manage Keys tab.', 'error');
-      generateBtn.disabled = false;
-      generateText.style.display = 'block';
-      generateSpinner.style.display = 'none';
-      return;
-    }
-    await new Promise(r => setTimeout(r, 800));
-    const idx = Math.floor(Math.random() * keys.length);
-    currentKey = keys[idx].key;
-    setKeyDisplay(currentKey, true);
-    copyBtn.disabled = false;
-    setGenMessage('Key successfully generated!', 'success');
-    keys = loadKeys();
-    for(let i=0; i<keys.length; i++) {
-      if(keys[i].key === currentKey) {
-        keys[i].used = true;
-        break;
-      }
-    }
-    saveKeys(keys);
-    renderKeys();
-    generateBtn.disabled = false;
-    generateText.style.display = 'block';
-    generateSpinner.style.display = 'none';
-  }
-
-  generateBtn.onclick = generateKey;
-
-  copyBtn.onclick = () => {
-    if(!currentKey) return;
-    navigator.clipboard.writeText(currentKey).then(() => {
-      setGenMessage('Key copied to clipboard!', 'success');
-      copyBtn.innerHTML = `
-        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-        <span>Copied!</span>
-      `;
-      copyBtn.disabled = true;
-      setTimeout(() => {
-        copyBtn.innerHTML = `
-          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-          </svg>
-          <span>Copy</span>
-        `;
-        copyBtn.disabled = false;
-      }, 1800);
-    }).catch(() => {
-      setGenMessage('Failed to copy key.', 'error');
-    });
-  };
-
-  const tabs = {
-    'tab-dashboard': 'section-dashboard',
-    'tab-keys': 'section-keys',
-    'tab-settings': 'section-settings'
-  };
-  Object.keys(tabs).forEach(tabId => {
-    const btn = document.getElementById(tabId);
-    btn.onclick = () => {
-      Object.values(tabs).forEach(sId => {
-        document.getElementById(sId).classList.remove('active');
-      });
-      Object.keys(tabs).forEach(tId => {
-        document.getElementById(tId).classList.remove('active');
-        document.getElementById(tId).setAttribute('aria-current','false');
-      });
-      document.getElementById(tabs[tabId]).classList.add('active');
-      btn.classList.add('active');
-      btn.setAttribute('aria-current','page');
-    };
+  generateKeyBtn.addEventListener('click', () => {
+    const newKey = generateNewKey();
+    if(!newKey) return;
+    newKeyDisplay.textContent = newKey;
+    copyNewKeyBtn.disabled = false;
+    showStatus('New key generated', true);
   });
+  copyNewKeyBtn.addEventListener('click', () => {
+    const key = newKeyDisplay.textContent;
+    if(!key) return;
+    navigator.clipboard.writeText(key).then(() => {
+      showStatus('Copied to clipboard!', true);
+    }).catch(() => {
+      showStatus('Failed to copy.', false);
+    });
+  });
+
+
+  function switchTab(selectedId) {
+    tabs.forEach(tab => {
+      const isSelected = tab.id === selectedId;
+      tab.classList.toggle('active', isSelected);
+      tab.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+    });
+    keysPanel.hidden = selectedId !== 'tabKeys';
+    scriptsPanel.hidden = selectedId !== 'tabScripts';
+  }
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.id));
+  });
+
+
+  function createScriptCard(idx, script) {
+    const card = document.createElement('div');
+    card.className = 'script-card';
+
+    const header = document.createElement('div');
+    header.className = 'script-header';
+    header.textContent = `Script #${idx + 1}`;
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-script';
+    delBtn.textContent = 'Delete';
+    delBtn.title = 'Delete script';
+    delBtn.onclick = () => {
+      scripts.splice(idx, 1);
+      saveScripts();
+      renderScripts();
+      showStatus('Script deleted', true, true);
+    };
+    header.appendChild(delBtn);
+    card.appendChild(header);
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'lua-editor';
+    textarea.value = script.content || '';
+    textarea.placeholder = 'Paste your Lua script here...';
+    textarea.spellcheck = false;
+    textarea.addEventListener('input', e => {
+      scripts[idx].content = e.target.value;
+      saveScripts();
+    });
+    card.appendChild(textarea);
+
+    const label = document.createElement('label');
+    label.className = 'key-toggle';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = !!script.keySystem;
+    checkbox.addEventListener('change', e => {
+      scripts[idx].keySystem = e.target.checked;
+      saveScripts();
+      renderScripts();
+      showStatus(`Key System ${e.target.checked ? 'enabled' : 'disabled'}`, true, true);
+    });
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(' Add Key System to Script'));
+    card.appendChild(label);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-script-btn';
+    saveBtn.textContent = 'Save Script';
+    saveBtn.onclick = () => {
+      saveScripts();
+      showStatus('Script saved', true, true);
+    };
+    card.appendChild(saveBtn);
+
+
+    if(script.keySystem) {
+      textarea.value = injectKeySystem(script.content || '');
+    }
+
+    return card;
+  }
+
+  function injectKeySystem(scriptText) {
+    const snippet = `
+local validKeys = {
+  "REPLACE_KEYS_HERE"
+}
+local function checkKey(key)
+  for _, k in pairs(validKeys) do
+    if k == key then return true end
+  end
+  return false
+end
+local userKey = "ENTER_YOUR_KEY_HERE"
+if not checkKey(userKey) then
+  error("Invalid key. Access denied.")
+end
+`;
+    let keysArray = keyStore[company].map(k => `"${k}"`);
+    let keysStr = keysArray.join(", ");
+   
+    const snippetStart = snippet.split("\n")[0].trim();
+    if(scriptText.includes(snippetStart)) {
+      scriptText = scriptText.replace(new RegExp(`local validKeys = {[^}]+}`, 's'), `local validKeys = {${keysStr}}`);
+      return scriptText;
+    }
+    return snippet.replace("REPLACE_KEYS_HERE", keysStr).replace("ENTER_YOUR_KEY_HERE", keyFromURL || '');
+  }
+
+  function renderScripts() {
+    scriptsManagerContainer.innerHTML = '';
+    if(scripts.length === 0) {
+      const p = document.createElement('p');
+      p.textContent = 'No scripts uploaded yet.';
+      p.style.textAlign = 'center';
+      p.style.color = '#94a3b8';
+      p.style.userSelect = 'none';
+      scriptsManagerContainer.appendChild(p);
+    } else {
+      scripts.forEach((s,i) => {
+        scriptsManagerContainer.appendChild(createScriptCard(i,s));
+      });
+    }
+    addScriptBtn.disabled = scripts.length >= maxScripts;
+  }
+
+  addScriptBtn.onclick = () => {
+    if(scripts.length >= maxScripts) return;
+    scripts.push({content: '', keySystem: false});
+    saveScripts();
+    renderScripts();
+    showStatus('New script added', true, true);
+  };
+
+  renderKeyList();
+  renderScripts();
+  switchTab('tabKeys');
 })();
 </script>
 </body>
