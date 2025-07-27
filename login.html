@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Luartor | API Key Login</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    * {
-      box-sizing: border-box;
-      user-select:none;
-    }
+    *{box-sizing:border-box;user-select:none}
     body {
       margin:0;
       height:100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+      font-family:'Poppins',sans-serif;
       display:flex;
       justify-content:center;
       align-items:center;
@@ -22,161 +18,159 @@
       color:#eee;
     }
     #app {
-      background: rgba(15, 22, 30, 0.95);
-      border-radius: 24px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      width: 420px;
-      max-width: 90vw;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      animation: fadeInScale 0.6s ease forwards;
+      background:rgba(15,22,30,0.95);
+      border-radius:24px;
+      box-shadow:0 15px 40px rgba(0,0,0,0.5);
+      width:420px;
+      max-width:90vw;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      animation:fadeInScale 0.6s ease forwards;
     }
     @keyframes fadeInScale {
-      0% {opacity: 0; transform: scale(0.8);}
-      100% {opacity: 1; transform: scale(1);}
+      0% {opacity:0;transform:scale(0.8)}
+      100% {opacity:1;transform:scale(1)}
     }
     header {
-      background: linear-gradient(90deg, #4e54c8, #8f94fb);
-      padding: 24px;
-      font-weight: 600;
-      font-size: 1.6rem;
-      text-align: center;
-      letter-spacing: 2px;
-      color: white;
-      box-shadow: 0 4px 8px rgba(78, 84, 200, 0.5);
+      background:linear-gradient(90deg,#4e54c8,#8f94fb);
+      padding:24px;
+      font-weight:600;
+      font-size:1.6rem;
+      text-align:center;
+      letter-spacing:2px;
+      color:#fff;
+      box-shadow:0 4px 8px rgba(78,84,200,0.5);
       user-select:none;
     }
     nav {
-      display: flex;
-      background: #1e2733;
+      display:flex;
+      background:#1e2733;
       user-select:none;
     }
     nav button {
-      flex: 1;
-      background: none;
-      border: none;
-      padding: 18px 0;
-      font-weight: 600;
-      color: #aaa;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: color 0.3s ease;
-      border-bottom: 3px solid transparent;
+      flex:1;
+      background:none;
+      border:none;
+      padding:18px 0;
+      font-weight:600;
+      color:#aaa;
+      cursor:pointer;
+      font-size:1rem;
+      transition:color 0.3s ease;
+      border-bottom:3px solid transparent;
     }
     nav button.active {
-      color: #8f94fb;
-      border-bottom: 3px solid #8f94fb;
-      cursor: default;
+      color:#8f94fb;
+      border-bottom:3px solid #8f94fb;
+      cursor:default;
     }
     nav button:hover:not(.active) {
-      color: #d0d0ff;
+      color:#d0d0ff;
     }
     main {
-      padding: 32px 28px 40px;
-      background: #121822;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
+      padding:32px 28px 40px;
+      background:#121822;
+      flex-grow:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      position:relative;
     }
     label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 10px;
-      letter-spacing: 0.03em;
-      color: #bbb;
+      display:block;
+      font-weight:600;
+      margin-bottom:10px;
+      letter-spacing:0.03em;
+      color:#bbb;
     }
-    input[type="text"] {
-      width: 100%;
-      padding: 14px 18px;
-      font-size: 1.1rem;
-      border-radius: 14px;
-      border: none;
-      outline: none;
-      background: #222c3c;
-      color: white;
-      transition: box-shadow 0.3s ease;
+    input[type=text] {
+      width:100%;
+      padding:14px 18px;
+      font-size:1.1rem;
+      border-radius:14px;
+      border:none;
+      outline:none;
+      background:#222c3c;
+      color:white;
+      transition:box-shadow 0.3s ease;
       box-shadow: inset 0 0 6px rgba(143,148,251,0.2);
-      font-family: 'Poppins', sans-serif;
-      letter-spacing: 0.05em;
+      font-family:'Poppins',sans-serif;
+      letter-spacing:0.05em;
     }
-    input[type="text"]:focus {
+    input[type=text]:focus {
       box-shadow: inset 0 0 12px #8f94fb;
     }
     button.login-btn {
-      margin-top: 24px;
-      padding: 15px 0;
-      background: #4e54c8;
-      background: linear-gradient(135deg, #4e54c8, #8f94fb);
-      border: none;
-      border-radius: 16px;
-      color: white;
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      box-shadow: 0 6px 15px rgba(78,84,200,0.5);
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      margin-top:24px;
+      padding:15px 0;
+      background: linear-gradient(135deg,#4e54c8,#8f94fb);
+      border:none;
+      border-radius:16px;
+      color:white;
+      font-weight:700;
+      font-size:1.15rem;
+      letter-spacing:0.1em;
+      cursor:pointer;
+      box-shadow:0 6px 15px rgba(78,84,200,0.5);
+      transition:background 0.3s ease,box-shadow 0.3s ease;
       user-select:none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
     }
     button.login-btn:hover:not(:disabled) {
-      background: linear-gradient(135deg, #675ee3, #a3a8f9);
+      background: linear-gradient(135deg,#675ee3,#a3a8f9);
       box-shadow: 0 10px 20px rgba(105, 94, 227, 0.7);
     }
     button.login-btn:disabled {
-      cursor: not-allowed;
-      background: #444a6a;
-      box-shadow: none;
-      color: #999;
+      cursor:not-allowed;
+      background:#444a6a;
+      box-shadow:none;
+      color:#999;
     }
     .message {
-      margin-top: 22px;
-      font-weight: 600;
-      min-height: 1.4em;
-      text-align: center;
-      letter-spacing: 0.05em;
+      margin-top:22px;
+      font-weight:600;
+      min-height:1.4em;
+      text-align:center;
+      letter-spacing:0.05em;
       user-select:none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      opacity:0;
+      transition:opacity 0.4s ease;
     }
     .message.show {
-      opacity: 1;
+      opacity:1;
     }
     .message.success {
-      color: #6dd400;
-      text-shadow: 0 0 6px #6dd400aa;
+      color:#6dd400;
+      text-shadow:0 0 6px #6dd400aa;
     }
     .message.error {
-      color: #ff5c5c;
-      text-shadow: 0 0 6px #ff5c5caa;
+      color:#ff5c5c;
+      text-shadow:0 0 6px #ff5c5caa;
     }
     .footer {
       text-align:center;
-      font-size: 0.8rem;
-      color: #555a7b;
-      margin-top: 12px;
+      font-size:0.8rem;
+      color:#555a7b;
+      margin-top:12px;
       user-select:none;
-      font-style: italic;
+      font-style:italic;
     }
-    /* Spinner */
     .spinner {
-      border: 3px solid #eee3;
-      border-top: 3px solid #8f94fb;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      margin-left: 10px;
+      border:3px solid #eee3;
+      border-top:3px solid #8f94fb;
+      border-radius:50%;
+      width:20px;
+      height:20px;
+      animation:spin 1s linear infinite;
+      margin-left:10px;
     }
     @keyframes spin {
-      0%{transform:rotate(0deg);}
-      100%{transform:rotate(360deg);}
+      0%{transform:rotate(0deg)}
+      100%{transform:rotate(360deg)}
     }
   </style>
 </head>
@@ -198,14 +192,13 @@
   <script>
     (() => {
       const url = 'https://raw.githubusercontent.com/RealMaybecool/Luartor/refs/heads/main/apikey.json'
-      const app = document.getElementById('app')
       const input = document.getElementById('apiKeyInput')
       const btn = document.getElementById('loginBtn')
       const msg = document.getElementById('msg')
 
       let keys = {}
       let loading = true
-      let refreshInterval = 120000 // 2 minutes
+      let refreshInterval = 120000
       let lastCheck = 0
 
       function setMessage(text = '', type = '') {
@@ -254,10 +247,14 @@
           return
         }
         if(keys.hasOwnProperty(val)) {
-          setMessage(`✅ Valid key! Company: ${keys[val]}`, 'success')
+          const company = keys[val]
+          setMessage(`✅ Valid key! Company: ${company}`, 'success')
           btn.disabled = true
           input.disabled = true
           clearInterval(refreshTimer)
+          setTimeout(() => {
+            window.location.href = `dashboard.html?company=${encodeURIComponent(company)}`
+          }, 1500)
         } else {
           setMessage('❌ Invalid API key.', 'error')
         }
@@ -274,7 +271,6 @@
       const refreshTimer = setInterval(() => {
         if(Date.now() - lastCheck >= refreshInterval) fetchKeys()
       }, 15000)
-
     })()
   </script>
 </body>
