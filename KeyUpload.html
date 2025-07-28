@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Luartor Script Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary: #4f46e5;
+    --secondary: #06b6d4;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --error: #ef4444;
+    --success: #10b981;
+    --bg-card: rgba(15, 23, 42, 0.85);
+  }
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body, html {
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #343456);
+    color: var(--light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  header {
+    font-weight: 700;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+    user-select: none;
+  }
+  main {
+    width: 100%;
+    max-width: 900px;
+  }
+  .company-banner {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--secondary);
+    user-select: none;
+  }
+  .scripts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 20px;
+  }
+  .script-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .script-header {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  textarea {
+    flex-grow: 1;
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    color: var(--light);
+    font-family: monospace;
+    font-size: 0.9rem;
+    padding: 14px;
+    resize: vertical;
+    min-height: 180px;
+    transition: border-color 0.3s ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 12px var(--secondary);
+  }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    margin: 12px 0 6px 0;
+    user-select: none;
+  }
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  .btn-save {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5);
+    transition: background 0.4s ease;
+  }
+  .btn-save:hover {
+    background: linear-gradient(90deg, #6366f1, #22d3ee);
+  }
+  .status-msg {
+    margin-top: 10px;
+    min-height: 22px;
+    font-weight: 600;
+    user-select: none;
+  }
+  .status-success {
+    color: var(--success);
+  }
+  .status-error {
+    color: var(--error);
+  }
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85rem;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<header>Luartor Script Upload</header>
+<div class="company-banner" id="companyName">Loading...</div>
+<main>
+  <div class="scripts-grid" id="scriptsGrid"></div>
+</main>
+<div class="status-msg" id="statusMsg"></div>
+<footer>© 2025 Luartor by TheBestDragon</footer>
+<script>
+(() => {
+  const maxScripts = 6;
+  const urlParams = new URLSearchParams(window.location.search);
+  const company = urlParams.get('company') || 'default';
+  const companyNameEl = document.getElementById('companyName');
+  const scriptsGrid = document.getElementById('scriptsGrid');
+  const statusMsg = document.getElementById('statusMsg');
+  let scripts = [];
+
+  companyNameEl.textContent = `Company: ${company}`;
+
+  function saveScripts() {
+    localStorage.setItem(`luartor_scripts_${company}`, JSON.stringify(scripts));
+  }
+  function loadScripts() {
+    const data = localStorage.getItem(`luartor_scripts_${company}`);
+    if(!data) return [];
+    try { return JSON.parse(data); } catch { return []; }
+  }
+  function showStatus(text, success = true) {
+    statusMsg.textContent = text;
+    statusMsg.className = success ? 'status-msg status-success' : 'status-msg status-error';
+    setTimeout(() => {
+      statusMsg.textContent = '';
+      statusMsg.className = 'status-msg';
+    }, 4000);
+  }
+  function createScriptCard(index, script) {
+    const card = document.createElement('div');
+    card.className = 'script-card';
+    const header = document.createElement('div');
+    header.className = 'script-header';
+    header.textContent = `Script #${index + 1}`;
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '×';
+    delBtn.title = 'Delete Script';
+    delBtn.style.background = 'none';
+    delBtn.style.border = 'none';
+    delBtn.style.color = 'var(--error)';
+    delBtn.style.fontSize = '1.8rem';
+    delBtn.style.cursor = 'pointer';
+    delBtn.style.userSelect = 'none';
+    delBtn.style.lineHeight = '1';
+    delBtn.style.padding = '0 4px';
+    delBtn.style.marginLeft = '10px';
+    delBtn.onclick = () => {
+      scripts.splice(index,1);
+      saveScripts();
+      renderScripts();
+      showStatus('Script deleted', true);
+    };
+    header.appendChild(delBtn);
+
+    const textarea = document.createElement('textarea');
+    textarea.value = script.content || '';
+    textarea.placeholder = 'Paste your Lua script here...';
+    textarea.spellcheck = false;
+    textarea.addEventListener('input', e => {
+      scripts[index].content = e.target.value;
+      saveScripts();
+    });
+
+    const label = document.createElement('label');
+    label.htmlFor = `keytoggle${index}`;
+    label.textContent = 'Add Key System to Script';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `keytoggle${index}`;
+    checkbox.checked = !!script.keySystem;
+    checkbox.addEventListener('change', e => {
+      scripts[index].keySystem = e.target.checked;
+      saveScripts();
+    });
+    label.prepend(checkbox);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn-save';
+    saveBtn.textContent = 'Save Script';
+    saveBtn.onclick = () => {
+      saveScripts();
+      showStatus('Script saved successfully', true);
+    };
+
+    card.appendChild(header);
+    card.appendChild(textarea);
+    card.appendChild(label);
+    card.appendChild(saveBtn);
+    return card;
+  }
+
+  function renderScripts() {
+    scriptsGrid.innerHTML = '';
+    if(scripts.length === 0) {
+      const info = document.createElement('p');
+      info.textContent = 'No scripts uploaded yet.';
+      info.style.textAlign = 'center';
+      info.style.color = '#94a3b8';
+      scriptsGrid.appendChild(info);
+    } else {
+      scripts.forEach((script,i) => {
+        scriptsGrid.appendChild(createScriptCard(i, script));
+      });
+    }
+    if(scripts.length < maxScripts) {
+      const addCard = document.createElement('div');
+      addCard.className = 'script-card';
+      addCard.style.justifyContent = 'center';
+      addCard.style.alignItems = 'center';
+      addCard.style.cursor = 'pointer';
+      addCard.style.fontWeight = '700';
+      addCard.style.fontSize = '2rem';
+      addCard.style.color = 'var(--secondary)';
+      addCard.style.userSelect = 'none';
+      addCard.textContent = '+ Add Script';
+      addCard.onclick = () => {
+        if(scripts.length >= maxScripts) return;
+        scripts.push({content:'', keySystem:false});
+        saveScripts();
+        renderScripts();
+        showStatus('New script added', true);
+      };
+      scriptsGrid.appendChild(addCard);
+    }
+  }
+
+  scripts = loadScripts();
+  renderScripts();
+})();
+</script>
+</body>
+</html>
